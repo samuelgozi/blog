@@ -5,7 +5,7 @@ import { text } from "drizzle-orm/sqlite-core";
 export const id = text().primaryKey().$default(nanoid);
 
 export const timestamps = {
-	updatedAt: text().$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
-	createdAt: text().default(sql`(CURRENT_TIMESTAMP)`),
+	updatedAt: text().notNull().$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
+	createdAt: text().notNull().default(sql`(CURRENT_TIMESTAMP)`),
 	deletedAt: text()
 }

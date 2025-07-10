@@ -11,19 +11,16 @@ const authSchema = {
 
 export const auth = new Elysia().post(
 	"/auth",
-	async (context) => {
+	async ({status, body}) => {
 		const user = await signIn(
-			context.body.username,
-			context.body.password,
+			body.username,
+			body.password,
 		);
 
-		if (!user) {
-			context.set.status = 401;
-			return;
-		}
+		if (!user) return status(401, "Invalid credentials")
 
 		return {
-			...user,
+			user,
 			token: await tokens.encrypt({user: user.id}),
 		};
 	},

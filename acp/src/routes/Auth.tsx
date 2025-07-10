@@ -1,3 +1,5 @@
+import styles from "./Auth.module.css";
+
 export default function Auth() {
-	return "You need to log in!";
+	return <Login />;
 }
