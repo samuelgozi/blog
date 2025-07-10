@@ -1,0 +1,54 @@
+.toolbox {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: var(--space-1);
+	border-bottom: 1px solid var(--border-color-dark-1);
+}
+
+.separator {
+	width: 1px;
+	height: 14px;
+	background-color: var(--border-color-light-1);
+	margin: 0 var(--space-2);
+}
+
+.button {
+	border: none;
+	background: none;
+	width: 28px;
+	height: 28px;
+	padding: 0;
+	border-radius: var(--radius-2);
+	color: var(--text-color-3);
+	transition:
+		background-color 0.2s,
+		color 0.2s;
+
+	&:hover {
+		color: var(--text-color-2);
+		background-color: var(--background-color-dark-3);
+	}
+
+	&.active {
+		color: var(--text-color-1);
+	}
+}
+
+.editor_wrapper {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2);
+}
+
+.editor {
+	overflow: auto;
+
+	max-width: 640px;
+	width: 100%;
+	margin: 0 auto;
+
+	:global(.tiptap) {
+		outline: none;
+	}
+}

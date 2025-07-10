@@ -1,0 +1,17 @@
+{
+	"name": "blog_workspace",
+	"author": "Samuel Elgozi",
+	"private": true,
+	"workspaces": [
+		"acp",
+		"backend",
+		"modules/*"
+	],
+	"devDependencies": {
+		"@biomejs/biome": "2.1.1",
+		"@types/bun": "latest"
+	},
+	"peerDependencies": {
+		"typescript": "^5"
+	}
+}

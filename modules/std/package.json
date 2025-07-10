@@ -1,0 +1,15 @@
+{
+	"name": "@mod/std",
+	"version": "0.0.1",
+	"author": "Samuel Elgozi",
+	"description": "Sam's Standard Library",
+	"type": "module",
+	"main": "main.ts",
+	"private": true,
+	"devDependencies": {
+		"@types/bun": "latest"
+	},
+	"peerDependencies": {
+		"typescript": "^5"
+	}
+}
