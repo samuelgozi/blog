@@ -1,15 +1,20 @@
 import type { App } from "@app/server/main.ts";
 import { treaty } from "@elysiajs/eden";
-import { auth } from "./auth";
+
+let authToken: string | null = null;
+
+export function setAuthToken(token: string | null) {
+	authToken = token;
+}
 
 export const app = treaty<App>("localhost:8000", {
-  onRequest() {
-		const authToken = auth()?.token;
-
-		if (authToken) return {
-			headers: {
-				Authorization: authToken
-			}
+	onRequest() {
+		if (authToken) {
+			return {
+				headers: {
+					Authorization: authToken,
+				},
+			};
 		}
-  }
-})
+	},
+});
