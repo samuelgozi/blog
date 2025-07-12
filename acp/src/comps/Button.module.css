@@ -1,0 +1,12 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  user-select: none;
+  vertical-align: top;
+
+  font-family: var(--font-family);
+  font-style: normal;
+  text-align: center;
+}

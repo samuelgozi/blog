@@ -36,16 +36,16 @@
 	--font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 
 	--shadow-color: 240deg 11% 4%;
-	--shadow-elevation-low:
+	--shadow-l1:
 		0px 0.5px 0.6px hsl(var(--shadow-color) / 0.24),
 		0px 0.8px 0.9px -1.2px hsl(var(--shadow-color) / 0.24),
 		0px 1.7px 1.9px -2.5px hsl(var(--shadow-color) / 0.24);
-	--shadow-elevation-medium:
+	--shadow-l2:
 		0px 0.5px 0.6px hsl(var(--shadow-color) / 0.25),
 		0px 1.5px 1.7px -0.8px hsl(var(--shadow-color) / 0.25),
 		0px 3.6px 4.1px -1.7px hsl(var(--shadow-color) / 0.25),
 		0px 8.7px 9.8px -2.5px hsl(var(--shadow-color) / 0.25);
-	--shadow-elevation-high:
+	--shadow-l3:
 		0px 0.5px 0.6px hsl(var(--shadow-color) / 0.23),
 		0px 2.2px 2.5px -0.4px hsl(var(--shadow-color) / 0.23),
 		0px 4px 4.5px -0.7px hsl(var(--shadow-color) / 0.23),
