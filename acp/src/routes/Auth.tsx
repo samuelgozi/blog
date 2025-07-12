@@ -1,18 +1,21 @@
 import { Field } from "@ark-ui/solid/field";
 import { PasswordInput } from "@ark-ui/solid/password-input";
+import { useNavigate } from "@solidjs/router";
 import { EyeIcon, EyeOffIcon } from "lucide-solid";
 import { createSignal } from "solid-js";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "~/contexts/AuthContext";
 import styles from "./Auth.module.css";
 
 export default function Auth() {
 	const [username, setUsername] = createSignal("");
 	const [password, setPassword] = createSignal("");
 	const { signIn } = useAuth();
+	const navigate = useNavigate();
 
-	function handleSubmit(e: Event) {
+	async function handleSubmit(e: Event) {
 		e.preventDefault();
-		signIn(username(), password());
+		await signIn(username(), password());
+		navigate("/");
 	}
 
 	return (

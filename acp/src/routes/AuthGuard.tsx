@@ -9,15 +9,18 @@ interface AuthGuardProps extends ParentProps {
 
 export default function AuthGuard(guardProps: AuthGuardProps) {
 	function AuthGuardComp(props: ParentProps) {
-		const { user } = useAuth();
-		const shouldPass = guardProps.require === "auth" ? user : !user;
+		const auth = useAuth();
+		const shouldPass = () => {
+			const user = auth.user();
+			return guardProps.require === "auth" ? user : !user;
+		};
 
-		if (!shouldPass) {
+		if (!shouldPass()) {
 			const navigate = useNavigate();
 			navigate(guardProps.redirect);
 		}
 
-		return <Show when={shouldPass}>{props.children}</Show>;
+		return <Show when={shouldPass()}>{props.children}</Show>;
 	}
 
 	return (

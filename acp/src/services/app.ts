@@ -3,7 +3,7 @@ import { treaty } from "@elysiajs/eden";
 
 let authToken: string | null = null;
 
-export function setAuthToken(token: string | null) {
+export function setClientToken(token: string | null) {
 	authToken = token;
 }
 

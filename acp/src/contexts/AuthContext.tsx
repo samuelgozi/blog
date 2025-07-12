@@ -1,11 +1,12 @@
 import {
+	type Accessor,
 	createContext,
 	createEffect,
+	createSignal,
 	type ParentProps,
 	useContext,
 } from "solid-js";
-import { createStore } from "solid-js/store";
-import { app, setAuthToken } from "../services/app";
+import { app, setClientToken } from "../services/app";
 
 interface User {
 	id: string;
@@ -14,70 +15,65 @@ interface User {
 	createdAt: Date;
 }
 
-type Auth =
-	| {
-			user: User;
-			token: string;
-	  }
-	| {
-			user: null;
-			token: null;
-	  };
-
 interface AuthContextType {
-	user: User | null;
-	token: string | null;
+	user: Accessor<User | null>;
+	token: Accessor<string | null>;
 	signIn: (username: string, password: string) => Promise<void>;
 	signOut: () => void;
 }
 
 const AuthContext = createContext<AuthContextType>();
 
-export function AuthProvider(props: ParentProps) {
-	const getInitialAuth = (): Auth => {
-		try {
-			const persistedAuth = localStorage.getItem("auth");
-			return persistedAuth
-				? JSON.parse(persistedAuth)
-				: { user: null, token: null };
-		} catch {
-			return { user: null, token: null };
-		}
-	};
+function getInitialAuth() {
+	try {
+		const persistedAuth = localStorage.getItem("auth");
+		return persistedAuth
+			? JSON.parse(persistedAuth)
+			: { user: null, token: null };
+	} catch {
+		return { user: null, token: null };
+	}
+}
 
-	const [auth, setAuth] = createStore<Auth>(getInitialAuth());
+export function AuthProvider(props: ParentProps) {
+	const initial = getInitialAuth();
+	const [user, setUser] = createSignal<User | null>(initial.user);
+	const [token, setToken] = createSignal<string | null>(initial.token);
 
 	createEffect(() => {
-		localStorage.setItem("auth", JSON.stringify(auth));
-		setAuthToken(auth.token);
+		localStorage.setItem(
+			"auth",
+			JSON.stringify({
+				user: user(),
+				token: token(),
+			}),
+		);
+		setClientToken(token());
 	});
 
 	async function signIn(username: string, password: string) {
 		const response = await app.auth.post({ username, password });
 		if (response.error) throw response.error.value;
 
-		setAuth({
-			user: {
-				id: response.data.user.id,
-				username: response.data.user.username,
-				updatedAt: new Date(response.data.user.updatedAt),
-				createdAt: new Date(response.data.user.createdAt),
-			},
-			token: response.data.token,
+		setUser({
+			id: response.data.user.id,
+			username: response.data.user.username,
+			updatedAt: new Date(response.data.user.updatedAt),
+			createdAt: new Date(response.data.user.createdAt),
 		});
+
+		setToken(response.data.token);
+		setClientToken(response.data.token);
 	}
 
 	function signOut() {
-		setAuth({
-			user: null,
-			token: null,
-		});
+		setUser(null);
+		setToken(null);
+		setClientToken(null);
 	}
 
 	return (
-		<AuthContext.Provider
-			value={{ user: auth.user, token: auth.token, signIn, signOut }}
-		>
+		<AuthContext.Provider value={{ user, token, signIn, signOut }}>
 			{props.children}
 		</AuthContext.Provider>
 	);
@@ -85,8 +81,6 @@ export function AuthProvider(props: ParentProps) {
 
 export function useAuth() {
 	const context = useContext(AuthContext);
-	if (!context) {
-		throw new Error("useAuth must be used within an AuthProvider");
-	}
+	if (!context) throw new Error("useAuth must be used within an AuthProvider");
 	return context;
 }
