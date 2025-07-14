@@ -1,12 +1,57 @@
 .button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  user-select: none;
-  vertical-align: top;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	user-select: none;
+	vertical-align: top;
 
-  font-family: var(--font-family);
-  font-style: normal;
-  text-align: center;
+	font-family: var(--font-family);
+	font-style: normal;
+	text-align: center;
+
+	margin: 0;
+	padding: 0;
+	border: none;
+}
+
+/*
+ * Variants
+ */
+.solid {
+}
+
+.subtle {
+}
+
+.outline {
+}
+
+.ghost {
+}
+
+.link {
+}
+
+/*
+ * Sizes
+ */
+.xs {
+	font-size: var(--text-size-2);
+	height: var(--field-size-1);
+	padding-inline: var(--field-space-1);
+	border-radius: var(--radius-1);
+}
+
+.sm {
+	font-size: var(--text-size-3);
+	height: var(--field-size-2);
+	padding-inline: var(--field-space-2);
+	border-radius: var(--radius-2);
+}
+
+.md {
+	font-size: var(--text-size-4);
+	height: var(--field-size-3);
+	padding-inline: var(--field-space-3);
+	border-radius: var(--radius-3);
 }

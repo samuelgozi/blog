@@ -17,12 +17,22 @@
 	--text-size-t3: 22px;
 	--text-size-t4: 20px;
 
+	--field-size-1: 24px;
+	--field-size-2: 28px;
+	--field-size-3: 32px;
+
+	--field-space-1: 8px;
+	--field-space-2: 16px;
+	--field-space-3: 24px;
+
 	--background-color-dark-1: #1c1c20;
 	--background-color-dark-2: #222328;
 	--background-color-dark-3: #26272c;
 
-	--border-color-light-1: #313237;
-	--border-color-dark-1: #313237;
+	--border-color-light-1: #27282b;
+	--border-color-light-2: #313237;
+
+	/* --border-color-dark-1: #313237; */
 
 	--space-1: 4px;
 	--space-2: 8px;
@@ -32,6 +42,7 @@
 	--radius-1: 2px;
 	--radius-2: 4px;
 	--radius-3: 8px;
+	--radius-4: 16px;
 
 	--font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 
@@ -73,9 +84,6 @@
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-
-	/* Removes overscroll behaviour in MacOS */
-	overflow: hidden;
 }
 
 * {
@@ -101,6 +109,12 @@ h6 {
 	line-height: 1.23;
 	font-weight: 500;
 	margin: 0;
+}
+
+#root {
+	/* height: 100dvh;
+	width: 100dvw;
+	overflow: auto; */
 }
 
 .tiptap {

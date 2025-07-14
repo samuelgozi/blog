@@ -1,6 +1,6 @@
 # Backend API
 
-A RESTful API for managing blog posts with draft/publish workflow built with Bun, Elysia, and Drizzle ORM.
+A RESTful API for managing blog posts with a revision-based content management system built with Bun, Elysia, and Drizzle ORM.
 
 ## Getting Started
 
@@ -25,9 +25,35 @@ The server will start on port 8000.
 - **Database**: SQLite with Drizzle ORM
 - **Authentication**: Custom token system with encrypted tokens
 
-## API Endpoints
+## Architecture Overview
 
-### Authentication
+### Core Concepts
+
+**Posts**: Metadata containers that hold information like author, publish date, and a reference to the current published revision.
+
+**Revisions**: Individual versions of content. Each revision contains the actual content (title, body, cover) and points to its parent revision, creating a history chain.
+
+**Head**: The current published revision that users see. The post entity points to this revision.
+
+**Drafts**: Any revision that is not part of the main published history chain. Multiple drafts can exist simultaneously, branching from any point in the history.
+
+### Revision System
+
+The system works like a simplified version control system:
+
+1. **Linear History**: Published revisions form a linear chain through parent-child relationships
+2. **Branching**: Drafts can branch off from any published revision
+3. **Immutable History**: Published history never changes; reverts are done by creating new revisions
+4. **Multiple Drafts**: Multiple people can work on different drafts simultaneously
+
+### Staleness Detection
+
+A draft is "stale" if its parent revision is not the current head. This happens when:
+- Someone creates a draft from revision A
+- Someone else publishes a different draft, making revision B the new head
+- The first draft is now stale (based on old revision A instead of current head B)
+
+## Authentication
 
 All endpoints require authentication via the `Authorization` header:
 
@@ -45,270 +71,69 @@ POST /auth
 }
 ```
 
-Response:
-```json
-{
-  "id": "123",
-  "username": "your_username",
-  "token": "encrypted_token_here"
-}
-```
+## Workflow
 
-Use the returned token in the `Authorization` header for all subsequent requests.
+### Basic Content Creation
+
+1. **Create Post**: Creates a post with its first revision as the head
+2. **Create Draft**: Branch from the current head to start editing
+3. **Update Draft**: Make changes to the draft revision
+4. **Accept Draft**: Make the draft the new head (publish)
+
+### Collaborative Editing
+
+Multiple drafts can exist simultaneously:
+- Each draft branches from some point in the history
+- Drafts can be created, updated, and deleted independently
+- When accepting a draft, the system detects if it's stale
+- Stale drafts can still be accepted but require manual confirmation
+
+## REST API Endpoints
 
 ### Posts
+- `GET /posts` - List all posts with draft summaries
+- `POST /posts` - Create a new post with initial revision
+- `GET /posts/:id` - Get post with current revision and draft summaries
+- `DELETE /posts/:id` - Delete post and all its revisions
 
-#### Create Post
-```
-POST /posts
-```
+### Revisions & History
+- `GET /posts/:id/history` - Get published revision history (linear chain)
 
-Creates a new post with an initial draft version.
+### Drafts
+- `POST /posts/:id/drafts` - Create new draft from current head
+- `PATCH /posts/:id/drafts` - Update the latest draft
+- `POST /posts/:id/drafts/:revisionId/accept` - Accept draft as new head
+- `DELETE /posts/:id/drafts/:revisionId` - Delete specific draft
 
-**Request Body:**
+### Request/Response Examples
+
+**Create Post:**
 ```json
+POST /posts
 {
   "title": "My Blog Post",
-  "content": "Post content here..",
+  "content": "Post content...",
   "cover": "https://example.com/cover.jpg",
   "authorId": "user123"
 }
 ```
 
-**Response:** `201 Created`
+**List Posts Response:**
 ```json
-{
-  "post": {
-    "id": "post_123",
-    "currentVersionId": "version_456",
-    "authorId": "user123",
-    "publishedAt": null,
-    "createdAt": "2023-01-01T00:00:00.000Z",
-    "updatedAt": "2023-01-01T00:00:00.000Z"
-  },
-  "version": {
-    "id": "version_456",
-    "postId": "post_123",
-    "version": 1,
-    "status": "draft",
-    "title": "My Blog Post",
-    "content": "Post content here...",
-    "cover": "https://example.com/cover.jpg",
-    "createdBy": "user123",
-    "createdAt": "2023-01-01T00:00:00.000Z"
-  }
-}
-```
-
-#### Get Post
-```
-GET /posts/:id
-```
-
-Retrieves a post with its current version information.
-
-**Response:** `200 OK`
-```json
-{
-  "post": {
-    "id": "post_123",
-    "currentVersionId": "version_456",
-    "authorId": "user123",
-    "publishedAt": null,
-    "createdAt": "2023-01-01T00:00:00.000Z",
-    "updatedAt": "2023-01-01T00:00:00.000Z"
-  },
-  "currentVersion": {
-    "id": "version_456",
-    "postId": "post_123",
-    "version": 1,
-    "status": "draft",
-    "title": "My Blog Post",
-    "content": "Post content here...",
-    "cover": "https://example.com/cover.jpg",
-    "createdBy": "user123",
-    "createdAt": "2023-01-01T00:00:00.000Z"
-  },
-  "isDraft": true,
-  "hasDraft": true
-}
-```
-
-#### Get Post Status
-```
-GET /posts/:id/status
-```
-
-Returns the current status of a post.
-
-**Response:** `200 OK`
-```json
-{
-  "hasDraft": true,
-  "hasPublished": false,
-  "publishedAt": null
-}
-```
-
-### Drafts
-
-#### Get Current Draft
-```
-GET /posts/:id/draft
-```
-
-Retrieves the current draft version of a post.
-
-**Response:** `200 OK` or `404 Not Found`
-
-#### Create or Replace Draft
-```
-PUT /posts/:id/draft
-```
-
-Creates a new draft or completely replaces an existing draft.
-
-**Request Body:**
-```json
-{
-  "title": "Updated Title",
-  "content": "Updated content...",
-  "cover": "https://example.com/new-cover.jpg",
-  "changeNote": "Major content revision"
-}
-```
-
-**Response:** `200 OK` (updated) or `201 Created` (new)
-
-#### Update Draft Partially
-```
-PATCH /posts/:id/draft
-```
-
-Updates specific fields of an existing draft.
-
-**Request Body:**
-```json
-{
-  "title": "Just updating the title"
-}
-```
-
-**Response:** `200 OK` or `404 Not Found`
-
-#### Delete Draft
-```
-DELETE /posts/:id/draft
-```
-
-Deletes the current draft version.
-
-**Response:** `204 No Content` or `404 Not Found`
-
-#### Create Draft from Published
-```
-POST /posts/:id/draft/from-published
-```
-
-Creates a new draft based on the current published version.
-
-**Response:** `201 Created` or `404 Not Found`
-
-### Versions
-
-#### Get All Versions
-```
-GET /posts/:id/versions
-```
-
-Retrieves all versions of a post, ordered by version number (newest first).
-
-**Response:** `200 OK`
-```json
-[
-  {
-    "id": "version_789",
-    "postId": "post_123",
-    "version": 2,
-    "status": "draft",
+[{
+  "id": "post_123",
+  "title": "My Blog Post",
+  "publishedAt": "2023-01-01T00:00:00.000Z",
+  "authorId": "user123",
+  "drafts": [{
+    "id": "rev_456",
     "title": "Updated Title",
-    "content": "Updated content...",
-    "createdBy": "user123",
-    "createdAt": "2023-01-02T00:00:00.000Z"
-  },
-  {
-    "id": "version_456",
-    "postId": "post_123",
-    "version": 1,
-    "status": "published",
-    "title": "My Blog Post",
-    "content": "Post content here...",
-    "createdBy": "user123",
-    "createdAt": "2023-01-01T00:00:00.000Z"
-  }
-]
+    "createdBy": "user456",
+    "createdAt": "2023-01-02T00:00:00.000Z",
+    "isStale": false
+  }]
+}]
 ```
-
-#### Get Published Version
-```
-GET /posts/:id/published
-```
-
-Retrieves the currently published version of a post.
-
-**Response:** `200 OK` or `404 Not Found`
-
-#### Get Working Version
-```
-GET /posts/:id/working
-```
-
-Retrieves the "working" version - the draft if it exists, otherwise the published version.
-
-**Response:** `200 OK`
-```json
-{
-  "version": {
-    "id": "version_789",
-    "postId": "post_123",
-    "version": 2,
-    "status": "draft",
-    "title": "Updated Title",
-    "content": "Updated content...",
-    "createdBy": "user123",
-    "createdAt": "2023-01-02T00:00:00.000Z"
-  },
-  "isDraft": true
-}
-```
-
-### Publishing
-
-#### Publish Draft
-```
-POST /posts/:id/publish
-```
-
-Publishes the current draft version and updates the post's published status.
-
-**Response:** `200 OK` or `404 Not Found`
-
-## Workflow
-
-The API supports a draft/publish workflow:
-
-1. **Create Post**: Creates a post with an initial draft
-2. **Edit Draft**: Update the draft as needed using `PUT` or `PATCH`
-3. **Publish**: Publish the draft to make it live
-4. **Create New Draft**: Create a new draft from the published version to make further changes
-5. **Repeat**: Continue the draft/publish cycle
-
-### Version Management
-
-- Each post can have multiple versions
-- Only one draft version can exist per post at a time
-- Published versions are immutable
-- The `currentVersionId` on the post always points to the published version (or the initial draft if never published)
 
 ## Error Responses
 
@@ -322,7 +147,6 @@ All endpoints return appropriate HTTP status codes:
 - `500 Internal Server Error` - Server error
 
 Error responses include a descriptive message:
-
 ```json
 "No draft found to update"
 ```
