@@ -7,8 +7,8 @@ export default function Home() {
 		<Split.Horizontal
 			class={styles.splitContainer}
 			defaultSize="250px"
-			right={"Main content"}
 			left={<Sidebar />}
+			right={"Main content"}
 		/>
 	);
 }

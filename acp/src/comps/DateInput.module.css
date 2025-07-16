@@ -1,0 +1,73 @@
+.control {
+	display: flex;
+
+	color: var(--text-color-1);
+	border: 1px solid var(--border-color-light-2);
+	border-radius: var(--radius-2);
+	background-color: var(--background-color-dark-3);
+	box-shadow: var(--shadow-1);
+
+	padding-inline-start: var(--space-2);
+
+	&:focus-within {
+		border-color: var(--text-color-3);
+		box-shadow: var(--shadow-2);
+	}
+
+	input {
+		flex-grow: 1;
+		border: none;
+		background-color: transparent;
+		height: var(--field-size-3);
+		outline: none;
+	}
+
+	svg {
+		color: var(--text-color-2);
+	}
+}
+
+.view {
+	overflow: auto;
+	width: 260px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	gap: var(--space-2);
+	padding: var(--space-2);
+
+	border-radius: var(--space-3);
+	box-shadow: var(--shadow-2);
+	border: 1px solid var(--border-color-light-1);
+	background-color: var(--background-color-dark-1);
+
+	table {
+		width: 100%;
+		border-collapse: separate;
+	}
+
+	&[hidden] {
+		display: none;
+	}
+}
+
+.tableHeader {
+	font-size: var(--text-size-2);
+	color: var(--text-color-2);
+}
+
+.viewControl {
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+}
+
+.cellTrigger {
+	width: 100%;
+	padding: 0;
+
+	&[data-view="day"] {
+		width: var(--field-size);
+	}
+}

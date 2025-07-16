@@ -45,7 +45,6 @@ export function Button(props: ButtonProps) {
 		sizeToClass[withDefaults.size],
 		props.class,
 	);
-
 	return (
 		<button {...buttonParams} class={classes}>
 			{props.children}

@@ -1,4 +1,4 @@
-.hSplit {
+.horizontal {
 	display: grid;
 	overflow: auto;
 	height: 100%;
@@ -8,33 +8,34 @@
 			min(var(--primary-size, auto), calc(100% - var(--min-size)))
 		)
 		1px auto;
-}
 
-.left, .right {
-	overflow: auto;
-}
-
-.handle {
-	position: relative;
-	width: 1px;
-	height: 100%;
-	cursor: var(--cursor);
-	background-color: var(--border-color-light-1);
-	transition: background-color 0.2s ease-in-out;
-
-	&:hover,
-	&[data-active="true"] {
-		cursor: col-resize;
-		background-color: highlight;
+	.left,
+	.right {
+		overflow: auto;
 	}
 
-	&::after {
-		content: "";
-		position: absolute;
-		top: 0;
-		bottom: 0;
-		left: -5px;
-		right: -5px;
-		z-index: 1;
+	.handle {
+		position: relative;
+		width: 1px;
+		height: 100%;
+		cursor: var(--cursor);
+		background-color: var(--border-color-light-1);
+		transition: background-color 0.2s ease-in-out;
+
+		&:hover,
+		&[data-active="true"] {
+			cursor: col-resize;
+			background-color: highlight;
+		}
+
+		&::after {
+			content: "";
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: -5px;
+			right: -5px;
+			z-index: 1;
+		}
 	}
 }

@@ -1,4 +1,5 @@
 .container {
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	gap: var(--space-2);
@@ -9,11 +10,39 @@
 }
 
 .title {
+	position: relative;
 	margin: var(--space-2);
 	font-size: var(--text-size-t1);
+
+	&.empty::before {
+		content: var(--placeholder);
+		color: var(--text-color-2);
+		position: absolute;
+		left: 0;
+		z-index: -1;
+	}
 
 	&:active,
 	&:focus {
 		outline: none;
 	}
+}
+
+.sidebar {
+	width: 320px;
+	position: absolute;
+	right: 0;
+
+	display: flex;
+	flex-direction: column;
+
+	padding: var(--space-2);
+	gap: var(--space-2);
+
+	border: 1px solid var(--border-color-light-1);
+	border-radius: var(--radius-3);
+	box-shadow: var(--shadow-2);
+	background-color: var(--background-color-dark-1);
+
+	transform: translateX(calc(100% + 30px + var(--space-3)));
 }

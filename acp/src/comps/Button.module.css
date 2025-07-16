@@ -9,9 +9,33 @@
 	font-style: normal;
 	text-align: center;
 
-	margin: 0;
-	padding: 0;
 	border: none;
+
+	/* This is overwritten by vairants */
+	font-size: var(--font-size, --text-size-2);
+	height: var(--field-size, --field-size-4);
+	padding-inline: var(--padding-inline, --field-space-3);
+	border-radius: var(--radius, --radius-3);
+
+	/* When only an icon is present in the button */
+	&:has(> svg:only-child) {
+		width: var(--field-size);
+		flex: 0 0 auto;
+		padding: 0;
+	}
+
+	svg {
+		color: var(--text-color-2);
+	}
+
+	&[hidden] {
+		display: none;
+	}
+
+	&:disabled,
+	&[data-disabled] {
+		color: var(--text-color-3);
+	}
 }
 
 /*
@@ -21,12 +45,22 @@
 }
 
 .subtle {
+	background-color: var(--background-color-dark-3);
+
+	&:hover {
+		background-color: var(--border-color-light-1);
+	}
 }
 
 .outline {
 }
 
 .ghost {
+	background-color: transparent;
+
+	&:hover {
+		background-color: var(--border-color-light-1);
+	}
 }
 
 .link {
@@ -36,22 +70,22 @@
  * Sizes
  */
 .xs {
-	font-size: var(--text-size-2);
-	height: var(--field-size-1);
-	padding-inline: var(--field-space-1);
-	border-radius: var(--radius-1);
+	--font-size: var(--text-size-2);
+	--field-size: var(--field-size-1);
+	--padding-inline: var(--field-space-1);
+	--radius: var(--radius-1);
 }
 
 .sm {
-	font-size: var(--text-size-3);
-	height: var(--field-size-2);
-	padding-inline: var(--field-space-2);
-	border-radius: var(--radius-2);
+	--font-size: var(--text-size-1);
+	--field-size: var(--field-size-2);
+	--padding-inline: var(--field-space-2);
+	--radius: var(--radius-2);
 }
 
 .md {
-	font-size: var(--text-size-4);
-	height: var(--field-size-3);
-	padding-inline: var(--field-space-3);
-	border-radius: var(--radius-3);
+	--font-size: var(--text-size-2);
+	--field-size: var(--field-size-3);
+	--padding-inline: var(--field-space-3);
+	--radius: var(--radius-2);
 }

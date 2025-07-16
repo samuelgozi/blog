@@ -4,6 +4,13 @@ import { Value } from "@sinclair/typebox/value";
 const envSchema = Type.Object({
 	DB_FILE_NAME: Type.String(),
 	AUTH_TOKEN_SECRET: Type.String(),
+
+	// Tigris storage
+	S3_ACCESS_KEY_ID: Type.String(),
+	S3_SECRET_ACCESS_KEY: Type.String(),
+	S3_ENDPOINT: Type.String(),
+	S3_BUCKET: Type.String(),
+	S3_REGION: Type.String(),
 });
 
 // Validate the environment variables against the schema.

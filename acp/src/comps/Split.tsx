@@ -4,8 +4,8 @@ import styles from "./Split.module.css";
 
 interface HorizontalProps {
 	class?: string;
-	defaultSize: string;
 	minSize?: string;
+	defaultSize: string;
 	right: JSX.Element;
 	left: JSX.Element;
 }
@@ -78,7 +78,11 @@ function Horizontal(props: HorizontalProps) {
 		setLeftSize(Number.parseFloat(props.defaultSize));
 	}
 
-	const classes = mergeClasses(styles.hSplit, props.class);
+	const classes = mergeClasses(
+		styles.horizontal,
+		props.class,
+		props.reverse && styles.reverse,
+	);
 	return (
 		<div
 			ref={container}
